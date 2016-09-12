@@ -8,7 +8,7 @@
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
             )](http://mit-license.org)
 
-DraggableTableView is a `UITableView` extesntion to make tableview dragable by long press. 
+DraggableTableView is a `UITableView` extesntion to make tableview draggable by long press. 
 
 ## Features
 - [x] All cells are dragable
@@ -23,7 +23,7 @@ DraggableTableView is a `UITableView` extesntion to make tableview dragable by l
 
 - [x] Only some subview in cell is dragable
 
-<img src="https://github.com/LeoMobileDeveloper/DraggableTableViewe/blob/master/ScreenShot/3.gif?raw=true" width="200">
+<img src="https://github.com/LeoMobileDeveloper/DraggableTableView/blob/master/ScreenShot/3.gif?raw=true" width="200">
 
 ## Require
 
