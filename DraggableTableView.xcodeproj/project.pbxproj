@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		522046311D8A64740038834B /* DragableTableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522046301D8A64740038834B /* DragableTableExtension.swift */; };
 		52A70E151D868CF20091D1AC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A70E0A1D868CF20091D1AC /* AppDelegate.swift */; };
 		52A70E161D868CF20091D1AC /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A70E0B1D868CF20091D1AC /* CustomTableViewCell.swift */; };
 		52A70E171D868CF20091D1AC /* CustomTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52A70E0C1D868CF20091D1AC /* CustomTableViewCell.xib */; };
@@ -21,10 +22,10 @@
 		52A70E211D868D3F0091D1AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52A70E201D868D3F0091D1AC /* Assets.xcassets */; };
 		52A70E261D868D800091D1AC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A70E221D868D800091D1AC /* LaunchScreen.storyboard */; };
 		52A70E271D868D800091D1AC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52A70E241D868D800091D1AC /* Main.storyboard */; };
-		52D762B01D813AC500A057A9 /* DragableTableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D762AF1D813AC500A057A9 /* DragableTableExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		522046301D8A64740038834B /* DragableTableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragableTableExtension.swift; sourceTree = "<group>"; };
 		52A70E0A1D868CF20091D1AC /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DraggableTableView/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		52A70E0B1D868CF20091D1AC /* CustomTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomTableViewCell.swift; path = DraggableTableView/CustomTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		52A70E0C1D868CF20091D1AC /* CustomTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CustomTableViewCell.xib; path = DraggableTableView/CustomTableViewCell.xib; sourceTree = SOURCE_ROOT; };
@@ -41,7 +42,6 @@
 		52A70E251D868D800091D1AC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = DraggableTableView/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 		52D762971D813A4300A057A9 /* DraggableTableView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DraggableTableView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D762AD1D813AA800A057A9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
-		52D762AF1D813AC500A057A9 /* DragableTableExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragableTableExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5220462F1D8A64740038834B /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				522046301D8A64740038834B /* DragableTableExtension.swift */,
+			);
+			path = Classes;
+			sourceTree = SOURCE_ROOT;
+		};
 		52D7628E1D813A4300A057A9 = {
 			isa = PBXGroup;
 			children = (
@@ -75,20 +83,12 @@
 		52D762991D813A4300A057A9 /* DraggableTableView */ = {
 			isa = PBXGroup;
 			children = (
-				52D762AC1D813AA200A057A9 /* Source */,
+				5220462F1D8A64740038834B /* Classes */,
 				52F0E8231D865693001B9DEA /* Example */,
 			);
 			name = DraggableTableView;
 			path = DragableTableExtension;
 			sourceTree = "<group>";
-		};
-		52D762AC1D813AA200A057A9 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				52D762AF1D813AC500A057A9 /* DragableTableExtension.swift */,
-			);
-			path = Source;
-			sourceTree = SOURCE_ROOT;
 		};
 		52F0E8231D865693001B9DEA /* Example */ = {
 			isa = PBXGroup;
@@ -192,7 +192,7 @@
 				52A70E1B1D868CF20091D1AC /* DragSpecialUIControlController.swift in Sources */,
 				52A70E161D868CF20091D1AC /* CustomTableViewCell.swift in Sources */,
 				52A70E151D868CF20091D1AC /* AppDelegate.swift in Sources */,
-				52D762B01D813AC500A057A9 /* DragableTableExtension.swift in Sources */,
+				522046311D8A64740038834B /* DragableTableExtension.swift in Sources */,
 				52A70E181D868CF20091D1AC /* DefaultController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
