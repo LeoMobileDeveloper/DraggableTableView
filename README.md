@@ -11,17 +11,17 @@
 DraggableTableView is a `UITableView` extesntion to make tableview draggable by long press. 
 
 ## Features
-- [x] All cells are dragable
+- [x] Default
 
 
 <img src="https://github.com/LeoMobileDeveloper/DraggableTableView/blob/master/ScreenShot/1.gif?raw=true" width="200">
 
 
-- [x] Special cell Fixed 
+- [x] Special cell fixed 
 
 <img src="https://github.com/LeoMobileDeveloper/DraggableTableView/blob/master/ScreenShot/2.gif?raw=true" width="200">
 
-- [x] Only some subview in cell is dragable
+- [x] Only subview in cell is dragable
 
 <img src="https://github.com/LeoMobileDeveloper/DraggableTableView/blob/master/ScreenShot/3.gif?raw=true" width="200">
 
