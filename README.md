@@ -33,7 +33,7 @@ DraggableTableView is a `UITableView` extesntion to make tableview draggable by 
 
 ## Install
 
-CocoaPod(Coming soon)
+CocoaPod
 
 ```
 pod "DraggableTableView"
