@@ -75,7 +75,7 @@ public extension UITableView{
         static var dragableKey = 2
     }
     // MARK: - Associated propertys -
-    var dragableDelegate:DragableTableDelegate?{
+    public var dragableDelegate:DragableTableDelegate?{
         get{
             return objc_getAssociatedObject(self, &OBJC_Key.dragableDelegateKey) as? DragableTableDelegate
         }
@@ -83,7 +83,7 @@ public extension UITableView{
             objc_setAssociatedObject(self, &OBJC_Key.dragableDelegateKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
         }
     }
-    var dragable:Bool{
+    public var dragable:Bool{
         get{
             let number = objc_getAssociatedObject(self, &OBJC_Key.dragableKey) as! NSNumber
             return number.boolValue

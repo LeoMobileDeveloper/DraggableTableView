@@ -12,5 +12,5 @@ Extension for the UITableView that allows a user to move cells with long press a
   s.author           = { 'Leo' => 'leomobiledeveloper@gmail.com' }
   s.source           = { :git => 'https://github.com/LeoMobileDeveloper/ImageMaskTransition.git', :tag => s.version.to_s }
   s.ios.deployment_target = '8.0'
-  s.source_files = 'Source/**/*'
+  s.source_files = 'Source/*'
 end
