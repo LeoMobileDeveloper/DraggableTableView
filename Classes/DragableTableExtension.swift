@@ -106,6 +106,7 @@ public extension UITableView{
             objc_setAssociatedObject(self, &OBJC_Key.dragableDelegateKey, number, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
         }
     }
+    /// The padding you want before trigger scroll up
     public var paddingTop:CGFloat{
         get{
             let number = objc_getAssociatedObject(self, &OBJC_Key.dragablePaddingTopKey) as? NSNumber
