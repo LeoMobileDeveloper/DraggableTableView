@@ -26,7 +26,7 @@ import UIKit
      - parameter tableView: tableView
      - parameter indexPath: target indexPath
      - parameter point:     point that in tableview Cell
-
+     
      - returns: dragable or not
      */
     optional func tableView(tableView: UITableView,canDragCellFrom indexPath: NSIndexPath, withTouchPoint point:CGPoint) -> Bool
@@ -41,6 +41,13 @@ import UIKit
      */
     optional func tableView(tableView: UITableView,canDragCellTo indexPath: NSIndexPath) -> Bool
     
+    /**
+     Called when the screenshot imageView center change
+     
+     - parameter tableView: tableView
+     - parameter imageView: screenshot
+     */
+    optional func tableView(tableView: UITableView,dragableImageView imageView: UIImageView)
 }
 
 /// A class to hold propertys
@@ -73,6 +80,7 @@ public extension UITableView{
         static var dragableDelegateKey = 0
         static var dragableHelperKey = 1
         static var dragableKey = 2
+        static var dragablePaddingTopKey = 3
     }
     // MARK: - Associated propertys -
     public var dragableDelegate:DragableTableDelegate?{
@@ -98,6 +106,19 @@ public extension UITableView{
             objc_setAssociatedObject(self, &OBJC_Key.dragableDelegateKey, number, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
         }
     }
+    public var paddingTop:CGFloat{
+        get{
+            let number = objc_getAssociatedObject(self, &OBJC_Key.dragablePaddingTopKey) as? NSNumber
+            guard let num = number else{
+                return 0.0;
+            }
+            return CGFloat(num.floatValue)
+        }
+        set{
+            let number = NSNumber(float: Float(newValue))
+            objc_setAssociatedObject(self, &OBJC_Key.dragablePaddingTopKey, number, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
+        }
+    }
     private var dragableHelper:DragableHelper?{
         get{
             return objc_getAssociatedObject(self, &OBJC_Key.dragableHelperKey) as? DragableHelper
@@ -120,7 +141,7 @@ public extension UITableView{
             self.contentOffset.y = min(max(0.0, self.contentOffset.y + dragableHelper.scrollSpeed),self.contentSize.height - self.frame.height)
             self.adjusFloatImageViewCenterY(dragableHelper.gesture.locationInView(self).y)
         }
-
+        
         let imageView = UIImageView()
         let helper = DragableHelper(tableView:self,displayLink: displayLink, gesture: longPressGesture, floatImageView: imageView)
         dragableHelper = helper
@@ -157,14 +178,14 @@ public extension UITableView{
             
             dragableHelper.floatImageView.frame = currentCell.bounds
             dragableHelper.floatImageView.center = currentCell.center
-    
+            self.dragableDelegate?.tableView?(self, dragableImageView: dragableHelper.floatImageView)
             dragableHelper.floatImageView.layer.shadowRadius = 5.0
             dragableHelper.floatImageView.layer.shadowOpacity = 0.2
             dragableHelper.floatImageView.layer.shadowOffset = CGSizeZero
             dragableHelper.floatImageView.layer.shadowPath = UIBezierPath(rect: dragableHelper.floatImageView.bounds).CGPath
             addSubview(dragableHelper.floatImageView)
             
-            UIView.animateWithDuration(0.2, animations: { 
+            UIView.animateWithDuration(0.2, animations: {
                 dragableHelper.floatImageView.transform = CGAffineTransformMakeScale(1.1, 1.1)
                 dragableHelper.floatImageView.alpha = 0.5
             })
@@ -172,10 +193,11 @@ public extension UITableView{
         case .Changed:
             adjusFloatImageViewCenterY(location.y)
             dragableHelper.scrollSpeed = 0.0
-//Refer from here https://github.com/okla/QuickRearrangeTableView/blob/master/QuickRearrangeTableView.swift
+            //Refer from here https://github.com/okla/QuickRearrangeTableView/blob/master/QuickRearrangeTableView.swift
             if contentSize.height > frame.height {
                 let halfCellHeight = dragableHelper.floatImageView.frame.size.height / 2.0
-                let cellCenterToTop = dragableHelper.floatImageView.center.y - bounds.origin.y
+                let cellCenterToTop = dragableHelper.floatImageView.center.y - bounds.origin.y - paddingTop
+                self.dragableDelegate?.tableView?(self, dragableImageView: dragableHelper.floatImageView)
                 if cellCenterToTop < halfCellHeight {
                     dragableHelper.scrollSpeed = 5.0*(cellCenterToTop/halfCellHeight - 1.1)
                 }
@@ -188,7 +210,7 @@ public extension UITableView{
             allowsSelection = true
             dragableHelper.displayLink.paused = true
             UIView.animateWithDuration(0.2,
-                                       animations: { 
+                                       animations: {
                                         dragableHelper.floatImageView.transform = CGAffineTransformIdentity
                                         dragableHelper.floatImageView.alpha = 1.0
                                         dragableHelper.floatImageView.frame = dragableHelper.draggingCell!.frame
@@ -218,6 +240,7 @@ public extension UITableView{
             return
         }
         floatImageView.center.y = min(max(newY, bounds.origin.y), bounds.origin.y + bounds.height)
+        self.dragableDelegate?.tableView?(self, dragableImageView: floatImageView)
         adjustCellOrderIfNecessary()
     }
     
@@ -250,7 +273,7 @@ private class _DisplayLink{
             return _link.paused
         }
         set{
-           _link.paused = newValue
+            _link.paused = newValue
         }
     }
     private init (_ callback: Void -> Void) {
@@ -289,10 +312,13 @@ private extension UIView{
      - returns: Image of self
      */
     func lh_screenShot()->UIImage?{
+        let mask = layer.mask
+        layer.mask = nil
         UIGraphicsBeginImageContextWithOptions(CGSize(width: frame.width, height: frame.height), false, 0.0)
         layer.renderInContext(UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext();
+        layer.mask = mask
         return image
     }
 }
