@@ -143,6 +143,7 @@
 				TargetAttributes = {
 					52D762961D813A4300A057A9 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0810;
 					};
 				};
 			};
@@ -312,6 +313,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Leo.DraggableTableView;
 				PRODUCT_NAME = DraggableTableView;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -323,6 +325,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Leo.DraggableTableView;
 				PRODUCT_NAME = DraggableTableView;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

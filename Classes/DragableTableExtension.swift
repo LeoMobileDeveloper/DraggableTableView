@@ -19,7 +19,7 @@ import UIKit
      - parameter toIndexPath: toIndexPath
      - returns: void
      */
-    func tableView(tableView:UITableView,dragCellFrom fromIndexPath:NSIndexPath,toIndexPath:NSIndexPath)
+    func tableView(_ tableView:UITableView,dragCellFrom fromIndexPath:IndexPath,toIndexPath:IndexPath)
     /**
      Weather a cell is dragable
      
@@ -29,7 +29,7 @@ import UIKit
      
      - returns: dragable or not
      */
-    optional func tableView(tableView: UITableView,canDragCellFrom indexPath: NSIndexPath, withTouchPoint point:CGPoint) -> Bool
+    @objc optional func tableView(_ tableView: UITableView,canDragCellFrom indexPath: IndexPath, withTouchPoint point:CGPoint) -> Bool
     
     /**
      Weahter a cell is sticky during dragging
@@ -39,7 +39,7 @@ import UIKit
      
      - returns: sticky or not
      */
-    optional func tableView(tableView: UITableView,canDragCellTo indexPath: NSIndexPath) -> Bool
+    @objc optional func tableView(_ tableView: UITableView,canDragCellTo indexPath: IndexPath) -> Bool
     
     /**
      Called when the screenshot imageView center change
@@ -47,7 +47,7 @@ import UIKit
      - parameter tableView: tableView
      - parameter imageView: screenshot
      */
-    optional func tableView(tableView: UITableView,dragableImageView imageView: UIImageView)
+    @objc optional func tableView(_ tableView: UITableView,dragableImageView imageView: UIImageView)
 }
 
 /// A class to hold propertys
@@ -68,7 +68,7 @@ private class DragableHelper:NSObject,UIGestureRecognizerDelegate{
         super.init()
         self.gesture.delegate = self
     }
-    @objc func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    @objc func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let attachTableView = attachTableView else{
             return false
         }
@@ -76,7 +76,7 @@ private class DragableHelper:NSObject,UIGestureRecognizerDelegate{
     }
 }
 public extension UITableView{
-    private struct OBJC_Key{
+    fileprivate struct OBJC_Key{
         static var dragableDelegateKey = 0
         static var dragableHelperKey = 1
         static var dragableKey = 2
@@ -97,12 +97,12 @@ public extension UITableView{
             return number.boolValue
         }
         set{
-            if newValue.boolValue {
+            if newValue {
                 setupDragable()
             }else{
                 cleanDragable()
             }
-            let number = NSNumber(bool: newValue)
+            let number = NSNumber(value: newValue as Bool)
             objc_setAssociatedObject(self, &OBJC_Key.dragableDelegateKey, number, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
         }
     }
@@ -116,11 +116,11 @@ public extension UITableView{
             return CGFloat(num.floatValue)
         }
         set{
-            let number = NSNumber(float: Float(newValue))
+            let number = NSNumber(value: Float(newValue) as Float)
             objc_setAssociatedObject(self, &OBJC_Key.dragablePaddingTopKey, number, objc_AssociationPolicy.OBJC_ASSOCIATION_ASSIGN)
         }
     }
-    private var dragableHelper:DragableHelper?{
+    fileprivate var dragableHelper:DragableHelper?{
         get{
             return objc_getAssociatedObject(self, &OBJC_Key.dragableHelperKey) as? DragableHelper
         }
@@ -129,7 +129,7 @@ public extension UITableView{
         }
     }
     // MARK: - Private set up -
-    private func setupDragable(){
+    fileprivate func setupDragable(){
         if dragableHelper != nil{
             cleanDragable()
         }
@@ -140,14 +140,14 @@ public extension UITableView{
                 return
             }
             self.contentOffset.y = min(max(0.0, self.contentOffset.y + dragableHelper.scrollSpeed),self.contentSize.height - self.frame.height)
-            self.adjusFloatImageViewCenterY(dragableHelper.gesture.locationInView(self).y)
+            self.adjusFloatImageViewCenterY(dragableHelper.gesture.location(in: self).y)
         }
         
         let imageView = UIImageView()
         let helper = DragableHelper(tableView:self,displayLink: displayLink, gesture: longPressGesture, floatImageView: imageView)
         dragableHelper = helper
     }
-    private func cleanDragable(){
+    fileprivate func cleanDragable(){
         guard let helper = dragableHelper else{
             return
         }
@@ -156,22 +156,22 @@ public extension UITableView{
     }
     
     // MARK: - Handle gesture and display link-
-    @objc private func handleLongPress(gesture: UILongPressGestureRecognizer){
+    @objc fileprivate func handleLongPress(_ gesture: UILongPressGestureRecognizer){
         assert(dragableDelegate != nil, "You must set delegate")
         guard let dragableHelper = dragableHelper else{
             return
         }
-        let location = gesture.locationInView(self)
+        let location = gesture.location(in: self)
         switch gesture.state {
-        case .Began:
-            guard let currentIndexPath = indexPathForRowAtPoint(location),let currentCell = cellForRowAtIndexPath(currentIndexPath)else{
+        case .began:
+            guard let currentIndexPath = indexPathForRow(at: location),let currentCell = cellForRow(at: currentIndexPath)else{
                 return
             }
             if let selectedRow = indexPathForSelectedRow{
-                deselectRowAtIndexPath(selectedRow, animated: false)
+                deselectRow(at: selectedRow, animated: false)
             }
             allowsSelection = false
-            currentCell.highlighted = false
+            currentCell.isHighlighted = false
             dragableHelper.draggingCell = currentCell
             //Configure imageview
             let screenShot = currentCell.lh_screenShot()
@@ -182,16 +182,16 @@ public extension UITableView{
             self.dragableDelegate?.tableView?(self, dragableImageView: dragableHelper.floatImageView)
             dragableHelper.floatImageView.layer.shadowRadius = 5.0
             dragableHelper.floatImageView.layer.shadowOpacity = 0.2
-            dragableHelper.floatImageView.layer.shadowOffset = CGSizeZero
-            dragableHelper.floatImageView.layer.shadowPath = UIBezierPath(rect: dragableHelper.floatImageView.bounds).CGPath
+            dragableHelper.floatImageView.layer.shadowOffset = CGSize.zero
+            dragableHelper.floatImageView.layer.shadowPath = UIBezierPath(rect: dragableHelper.floatImageView.bounds).cgPath
             addSubview(dragableHelper.floatImageView)
             
-            UIView.animateWithDuration(0.2, animations: {
-                dragableHelper.floatImageView.transform = CGAffineTransformMakeScale(1.1, 1.1)
+            UIView.animate(withDuration: 0.2, animations: {
+                dragableHelper.floatImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
                 dragableHelper.floatImageView.alpha = 0.5
             })
-            currentCell.hidden =  true
-        case .Changed:
+            currentCell.isHidden =  true
+        case .changed:
             adjusFloatImageViewCenterY(location.y)
             dragableHelper.scrollSpeed = 0.0
             //Refer from here https://github.com/okla/QuickRearrangeTableView/blob/master/QuickRearrangeTableView.swift
@@ -210,25 +210,25 @@ public extension UITableView{
         default:
             allowsSelection = true
             dragableHelper.displayLink.paused = true
-            UIView.animateWithDuration(0.2,
+            UIView.animate(withDuration: 0.2,
                                        animations: {
-                                        dragableHelper.floatImageView.transform = CGAffineTransformIdentity
+                                        dragableHelper.floatImageView.transform = CGAffineTransform.identity
                                         dragableHelper.floatImageView.alpha = 1.0
                                         dragableHelper.floatImageView.frame = dragableHelper.draggingCell!.frame
                 },
                                        completion: { (completed) in
                                         dragableHelper.floatImageView.removeFromSuperview()
-                                        dragableHelper.draggingCell?.hidden = false
+                                        dragableHelper.draggingCell?.isHidden = false
                                         dragableHelper.draggingCell = nil
             })
         }
     }
-    func lh_gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
-        let location = gestureRecognizer.locationInView(self)
-        guard let currentIndexPath = indexPathForRowAtPoint(location),let currentCell = cellForRowAtIndexPath(currentIndexPath) else{
+    func lh_gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        let location = gestureRecognizer.location(in: self)
+        guard let currentIndexPath = indexPathForRow(at: location),let currentCell = cellForRow(at: currentIndexPath) else{
             return false
         }
-        let pointInCell = convertPoint(location, toView: currentCell)
+        let pointInCell = convert(location, to: currentCell)
         guard let canDrag = dragableDelegate?.tableView?(self, canDragCellFrom: currentIndexPath, withTouchPoint: pointInCell) else{
             return true
         }
@@ -236,7 +236,7 @@ public extension UITableView{
     }
     
     // MARK: - Private method -
-    func adjusFloatImageViewCenterY(newY:CGFloat){
+    func adjusFloatImageViewCenterY(_ newY:CGFloat){
         guard let floatImageView = dragableHelper?.floatImageView else{
             return
         }
@@ -246,13 +246,13 @@ public extension UITableView{
     }
     
     func adjustCellOrderIfNecessary(){
-        guard let dragableDelegate = dragableDelegate,floatImageView = dragableHelper?.floatImageView,toIndexPath = indexPathForRowAtPoint(floatImageView.center) else{
+        guard let dragableDelegate = dragableDelegate,let floatImageView = dragableHelper?.floatImageView,let toIndexPath = indexPathForRow(at: floatImageView.center) else{
             return
         }
-        guard let draggingCell = dragableHelper?.draggingCell,dragingIndexPath = indexPathForCell(draggingCell) else{
+        guard let draggingCell = dragableHelper?.draggingCell,let dragingIndexPath = indexPath(for: draggingCell) else{
             return
         }
-        guard dragingIndexPath.compare(toIndexPath) != NSComparisonResult.OrderedSame else{
+        guard (dragingIndexPath as NSIndexPath).compare(toIndexPath) != ComparisonResult.orderedSame else{
             return
         }
         if let canDragTo = dragableDelegate.tableView?(self, canDragCellTo: toIndexPath){
@@ -261,32 +261,32 @@ public extension UITableView{
                 return
             }
         }
-        draggingCell.hidden = true
+        draggingCell.isHidden = true
         beginUpdates()
         dragableDelegate.tableView(self, dragCellFrom: dragingIndexPath, toIndexPath: toIndexPath)
-        moveRowAtIndexPath(dragingIndexPath, toIndexPath: toIndexPath)
+        moveRow(at: dragingIndexPath, to: toIndexPath)
         endUpdates()
     }
 }
 private class _DisplayLink{
     var paused:Bool{
         get{
-            return _link.paused
+            return _link.isPaused
         }
         set{
-            _link.paused = newValue
+            _link.isPaused = newValue
         }
     }
-    private init (_ callback: Void -> Void) {
+    fileprivate init (_ callback: @escaping (Void) -> Void) {
         _callback = callback
         _link = CADisplayLink(target: _DisplayTarget(self), selector: #selector(_DisplayTarget._callback))
-        _link.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
-        _link.paused = true
+        _link.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
+        _link.isPaused = true
     }
     
-    private let _callback: Void -> Void
+    fileprivate let _callback: (Void) -> Void
     
-    private var _link: CADisplayLink!
+    fileprivate var _link: CADisplayLink!
     
     deinit {
         _link.invalidate()
@@ -316,7 +316,7 @@ private extension UIView{
         let mask = layer.mask
         layer.mask = nil
         UIGraphicsBeginImageContextWithOptions(CGSize(width: frame.width, height: frame.height), false, 0.0)
-        layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        layer.render(in: UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext();
         layer.mask = mask

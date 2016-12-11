@@ -15,7 +15,7 @@ class TableViewController: UITableViewController,DragableTableDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.registerNib(UINib(nibName: "CustomTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
+        tableView.register(UINib(nibName: "CustomTableViewCell", bundle: nil), forCellReuseIdentifier: "cell")
         //Set up dragable
         self.tableView.dragable = true
         self.tableView.dragableDelegate = self
@@ -23,30 +23,30 @@ class TableViewController: UITableViewController,DragableTableDelegate {
     }
     
     // MARK: - DragableTableDelegate -
-    func tableView(tableView: UITableView, canDragCellTo indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canDragCellTo indexPath: IndexPath) -> Bool {
         return indexPath.row > 0
     }
-    func tableView(tableView: UITableView, canDragCellFrom indexPath: NSIndexPath, withTouchPoint point: CGPoint) -> Bool {
+    func tableView(_ tableView: UITableView, canDragCellFrom indexPath: IndexPath, withTouchPoint point: CGPoint) -> Bool {
         return indexPath.row > 0
     }
-    func tableView(tableView: UITableView, dragCellFrom fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-        dataArray.exchangeObjectAtIndex(fromIndexPath.row, withObjectAtIndex: toIndexPath.row)
+    func tableView(_ tableView: UITableView, dragCellFrom fromIndexPath: IndexPath, toIndexPath: IndexPath) {
+        dataArray.exchangeObject(at: fromIndexPath.row, withObjectAt: toIndexPath.row)
     }
     // MARK: - Table view data source
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataArray.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as? CustomTableViewCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? CustomTableViewCell
         cell?.customLabel?.text = "\(dataArray[indexPath.row])"
         return cell!
     }
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100.0
     }
 }

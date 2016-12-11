@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DraggableTableView'
-  s.version          = '0.1.1'
+  s.version          = '0.2.0'
   s.summary          = 'Extension for the UITableView that allows a user to move cells with long press and drop'
   s.description      = <<-DESC
 Extension for the UITableView that allows a user to move cells with long press and drop,it is a "Drop to use" library.

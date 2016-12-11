@@ -28,7 +28,7 @@ DraggableTableView is a `UITableView` extesntion to make tableview draggable by 
 ## Require
 
 - iOS 8
-- Swift 2
+- Swift 3
 
 
 ## Install

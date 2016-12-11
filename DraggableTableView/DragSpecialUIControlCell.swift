@@ -9,7 +9,7 @@
 import UIKit
 
 class DragSpecialUIControlCell: UITableViewCell {
-    func longPressValid(point:CGPoint)->Bool{
+    func longPressValid(_ point:CGPoint)->Bool{
         return editImageView.frame.contains(point)
     }
     @IBOutlet weak var editImageView: UIImageView!
@@ -19,7 +19,7 @@ class DragSpecialUIControlCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
