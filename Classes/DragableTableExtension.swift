@@ -59,7 +59,7 @@ import UIKit
      
      - returns: sticky or not
      */
-    @objc optional func tableView(_ tableView: UITableView, canDragCellFrom fromIndexPath: IndexPath, over indexPathOver: IndexPath) -> Bool
+    @objc optional func tableView(_ tableView: UITableView, canDragCellFrom fromIndexPath: IndexPath, over overIndexPath: IndexPath) -> Bool
 
     /**
      Called when the screenshot imageView center change
