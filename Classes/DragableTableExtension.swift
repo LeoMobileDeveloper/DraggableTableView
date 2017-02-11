@@ -59,7 +59,7 @@ import UIKit
      
      - returns: sticky or not
      */
-    @objc optional func tableView(_ tableView: UITableView, canDragCellOver indexPath: IndexPath) -> Bool
+    @objc optional func tableView(_ tableView: UITableView, canDragCellFrom fromIndexPath: IndexPath, over indexPathOver: IndexPath) -> Bool
 
     /**
      Called when the screenshot imageView center change
@@ -317,7 +317,7 @@ public extension UITableView{
         guard (dragingIndexPath as NSIndexPath).compare(toIndexPath) != ComparisonResult.orderedSame else{
             return false
         }
-        if let canDragOver = dragableDelegate.tableView?(self, canDragCellOver: toIndexPath){
+        if let canDragOver = dragableDelegate.tableView?(self, canDragCellFrom: dragingIndexPath, over: toIndexPath) {
             if !canDragOver {
                 return false
             }
