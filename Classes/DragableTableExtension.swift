@@ -332,7 +332,7 @@ public extension UITableView{
         draggingCell.isHidden = true
         beginUpdates()
         dragableDelegate.tableView?(self, dragCellFrom: dragingIndexPath, overIndexPath: toIndexPath)
-        deleteRows(at: [dragingIndexPath], with: .automatic)
+        //deleteRows(at: [dragingIndexPath], with: .automatic)
         endUpdates()
         return true
     }
