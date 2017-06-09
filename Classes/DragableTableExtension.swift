@@ -243,6 +243,9 @@ public extension UITableView{
                                 dragableHelper.floatImageView.removeFromSuperview()
                                 dragableHelper.draggingCell?.isHidden = false
                                 dragableHelper.draggingCell = nil
+								if let currentIndexPath = self.indexPathForRow(at: location) {
+									self.dragableDelegate?.tableView?(self, endDragCellTo: currentIndexPath)
+								}
                 })
             } else {
                 UIView.animate(withDuration: 0.2,
