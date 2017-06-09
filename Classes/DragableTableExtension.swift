@@ -68,6 +68,9 @@ import UIKit
      - parameter imageView: screenshot
      */
     @objc optional func tableView(_ tableView: UITableView,dragableImageView imageView: UIImageView)
+
+	
+	@objc optional func tableView(_ tableView: UITableView, endDragCellTo indexPath: IndexPath)
 }
 
 /// A class to hold propertys
@@ -252,6 +255,9 @@ public extension UITableView{
                                             dragableHelper.floatImageView.removeFromSuperview()
                                             dragableHelper.draggingCell?.isHidden = false
                                             dragableHelper.draggingCell = nil
+											if let currentIndexPath = self.indexPathForRow(at: location) {
+												self.dragableDelegate?.tableView?(self, endDragCellTo: currentIndexPath)
+											}
                 })
             }
         }
