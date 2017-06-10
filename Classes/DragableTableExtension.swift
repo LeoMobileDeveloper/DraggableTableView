@@ -19,7 +19,17 @@ import UIKit
      - parameter toIndexPath: toIndexPath
      - returns: void
      */
-    func tableView(_ tableView:UITableView,dragCellFrom fromIndexPath:IndexPath,toIndexPath:IndexPath)
+    func tableView(_ tableView:UITableView, dragCellFrom fromIndexPath:IndexPath, toIndexPath:IndexPath)
+    
+    /**
+     A cell is moved from FromIndexPath over overIndexPath, you need to adjust your model here
+     - parameter tableView: tableview
+     - parameter fromIndexPath: from indexPath
+     - parameter overIndexPath: overIndexPath
+     - returns: void
+     */
+    @objc optional func tableView(_ tableView:UITableView, dragCellFrom fromIndexPath:IndexPath, overIndexPath:IndexPath)
+    
     /**
      Weather a cell is dragable
      
@@ -29,18 +39,28 @@ import UIKit
      
      - returns: dragable or not
      */
-    @objc optional func tableView(_ tableView: UITableView,canDragCellFrom indexPath: IndexPath, withTouchPoint point:CGPoint) -> Bool
+    @objc optional func tableView(_ tableView: UITableView, canDragCellFrom indexPath: IndexPath, withTouchPoint point:CGPoint) -> Bool
     
     /**
-     Weahter a cell is sticky during dragging
+     Weather a cell is sticky during dragging
      
      - parameter tableView: tableview
      - parameter indexPath: toIndex
      
      - returns: sticky or not
      */
-    @objc optional func tableView(_ tableView: UITableView,canDragCellTo indexPath: IndexPath) -> Bool
+    @objc optional func tableView(_ tableView: UITableView, canDragCellTo indexPath: IndexPath) -> Bool
     
+    /**
+     Weather a cell is sticky during dragging
+     
+     - parameter tableView: tableview
+     - parameter indexPath: toIndex
+     
+     - returns: sticky or not
+     */
+    @objc optional func tableView(_ tableView: UITableView, canDragCellFrom fromIndexPath: IndexPath, over overIndexPath: IndexPath) -> Bool
+
     /**
      Called when the screenshot imageView center change
      
@@ -48,6 +68,9 @@ import UIKit
      - parameter imageView: screenshot
      */
     @objc optional func tableView(_ tableView: UITableView,dragableImageView imageView: UIImageView)
+
+	
+	@objc optional func tableView(_ tableView: UITableView, endDragCellTo indexPath: IndexPath)
 }
 
 /// A class to hold propertys
@@ -164,7 +187,7 @@ public extension UITableView{
         let location = gesture.location(in: self)
         switch gesture.state {
         case .began:
-            guard let currentIndexPath = indexPathForRow(at: location),let currentCell = cellForRow(at: currentIndexPath)else{
+            guard let currentIndexPath = indexPathForRow(at: location),let currentCell = cellForRow(at: currentIndexPath) else {
                 return
             }
             if let selectedRow = indexPathForSelectedRow{
@@ -210,17 +233,36 @@ public extension UITableView{
         default:
             allowsSelection = true
             dragableHelper.displayLink.paused = true
-            UIView.animate(withDuration: 0.2,
-                                       animations: {
-                                        dragableHelper.floatImageView.transform = CGAffineTransform.identity
-                                        dragableHelper.floatImageView.alpha = 1.0
-                                        dragableHelper.floatImageView.frame = dragableHelper.draggingCell!.frame
+            if adjustFinalCellOrderIfNecessary() {
+                UIView.animate(withDuration: 0.2,
+                               animations: {
+                                dragableHelper.floatImageView.transform = CGAffineTransform.identity
+                                dragableHelper.floatImageView.alpha = 1.0
                 },
-                                       completion: { (completed) in
-                                        dragableHelper.floatImageView.removeFromSuperview()
-                                        dragableHelper.draggingCell?.isHidden = false
-                                        dragableHelper.draggingCell = nil
-            })
+                               completion: { (completed) in
+                                dragableHelper.floatImageView.removeFromSuperview()
+                                dragableHelper.draggingCell?.isHidden = false
+                                dragableHelper.draggingCell = nil
+								if let currentIndexPath = self.indexPathForRow(at: location) {
+									self.dragableDelegate?.tableView?(self, endDragCellTo: currentIndexPath)
+								}
+                })
+            } else {
+                UIView.animate(withDuration: 0.2,
+                                           animations: {
+                                            dragableHelper.floatImageView.transform = CGAffineTransform.identity
+                                            dragableHelper.floatImageView.alpha = 1.0
+                                            dragableHelper.floatImageView.frame = dragableHelper.draggingCell!.frame
+                    },
+                                           completion: { (completed) in
+                                            dragableHelper.floatImageView.removeFromSuperview()
+                                            dragableHelper.draggingCell?.isHidden = false
+                                            dragableHelper.draggingCell = nil
+											if let currentIndexPath = self.indexPathForRow(at: location) {
+												self.dragableDelegate?.tableView?(self, endDragCellTo: currentIndexPath)
+											}
+                })
+            }
         }
     }
     func lh_gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -255,17 +297,53 @@ public extension UITableView{
         guard (dragingIndexPath as NSIndexPath).compare(toIndexPath) != ComparisonResult.orderedSame else{
             return
         }
-        if let canDragTo = dragableDelegate.tableView?(self, canDragCellTo: toIndexPath){
+        if let canDragTo = dragableDelegate.tableView?(self, canDragCellTo: toIndexPath) {
             if !canDragTo {
-                
                 return
             }
         }
+        let destinationCell = cellForRow(at: toIndexPath)!
+        let sign = CGFloat((toIndexPath.row - dragingIndexPath.row >= 0) ? 1 : -1)
+        
+        if ((floatImageView.center.y - destinationCell.center.y) * sign < destinationCell.frame.height / 3) {
+            return
+        }
+        
         draggingCell.isHidden = true
         beginUpdates()
         dragableDelegate.tableView(self, dragCellFrom: dragingIndexPath, toIndexPath: toIndexPath)
         moveRow(at: dragingIndexPath, to: toIndexPath)
         endUpdates()
+    }
+    
+    func adjustFinalCellOrderIfNecessary() -> Bool {
+        guard let dragableDelegate = dragableDelegate,let floatImageView = dragableHelper?.floatImageView,let toIndexPath = indexPathForRow(at: floatImageView.center) else{
+            return false
+        }
+        guard let draggingCell = dragableHelper?.draggingCell,let dragingIndexPath = indexPath(for: draggingCell) else{
+            return false
+        }
+        guard (dragingIndexPath as NSIndexPath).compare(toIndexPath) != ComparisonResult.orderedSame else{
+            return false
+        }
+        if let canDragOver = dragableDelegate.tableView?(self, canDragCellFrom: dragingIndexPath, over: toIndexPath) {
+            if !canDragOver {
+                return false
+            }
+        }
+        
+        let destinationCell = cellForRow(at: toIndexPath)!
+        let sign = CGFloat((toIndexPath.row - dragingIndexPath.row >= 0) ? 1 : -1)
+
+        if ((floatImageView.center.y - destinationCell.center.y) * sign > destinationCell.frame.height / 3) {
+            return false
+        }
+        draggingCell.isHidden = true
+        beginUpdates()
+        dragableDelegate.tableView?(self, dragCellFrom: dragingIndexPath, overIndexPath: toIndexPath)
+        //deleteRows(at: [dragingIndexPath], with: .automatic)
+        endUpdates()
+        return true
     }
 }
 private class _DisplayLink{

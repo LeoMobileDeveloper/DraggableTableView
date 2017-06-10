@@ -143,6 +143,7 @@
 				TargetAttributes = {
 					52D762961D813A4300A057A9 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = NULGQZ4NMG;
 						LastSwiftMigration = 0810;
 					};
 				};
@@ -309,6 +310,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = NULGQZ4NMG;
 				INFOPLIST_FILE = "$(SRCROOT)/DraggableTableView/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Leo.DraggableTableView;
@@ -321,6 +323,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = NULGQZ4NMG;
 				INFOPLIST_FILE = "$(SRCROOT)/DraggableTableView/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Leo.DraggableTableView;

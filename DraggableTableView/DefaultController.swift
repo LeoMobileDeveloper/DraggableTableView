@@ -23,6 +23,9 @@ class DefaultController: UITableViewController,DragableTableDelegate{
     func tableView(_ tableView: UITableView, dragCellFrom fromIndexPath: IndexPath, toIndexPath: IndexPath) {
         dataArray.exchangeObject(at: fromIndexPath.row, withObjectAt: toIndexPath.row)
     }
+    func tableView(_ tableView: UITableView, dragCellFrom fromIndexPath: IndexPath, overIndexPath: IndexPath) {
+        dataArray.removeObject(at: fromIndexPath.row)
+    }
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
